@@ -1,8 +1,5 @@
 package CollectionAssignment
 
-/**
-  * Created by Anil Mehta on 23-01-2017.
-  */
 object StudentMarks {
   def main(args: Array[String]): Unit = {
     val studentsList = List(StudentCase(1, "Anmol", Gender.male), StudentCase(2, "Archana", Gender.female), StudentCase(3, "Saniya", Gender.female),
