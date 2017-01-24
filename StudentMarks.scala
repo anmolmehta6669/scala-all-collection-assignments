@@ -1,5 +1,8 @@
 package CollectionAssignment
 
+/**
+  * Created by Anil Mehta on 23-01-2017.
+  */
 object StudentMarks {
   def main(args: Array[String]): Unit = {
     val studentsList = List(StudentCase(1, "Anmol", Gender.male), StudentCase(2, "Archana", Gender.female), StudentCase(3, "Saniya", Gender.female),
@@ -19,7 +22,7 @@ object StudentMarks {
     //-----------------------------------------------
     val mapList = mapping(marksList, studentsList)
     println("Score Card as a Map having name as key and List of List of scorecards as value (basically done for duplicate names)")
-    mapList.map(println _)
+    mapList.foreach(println _)
     println("Here we are doing Searching by the name Shubham")
     searchByName(marksList, studentsList, "shubham")
     //------------------------------------------------
@@ -29,15 +32,15 @@ object StudentMarks {
     //-------------------------------------------------
     val aboveScorers = scoredAbove(marksList, studentsList, 80)
     println("The students scoring above 80% are: ")
-    aboveScorers._1.map(println _)
-    aboveScorers._2.map(println _)
+    aboveScorers._1.foreach(println _)
+    aboveScorers._2.foreach(println _)
     //-------------------------------------------------
     val similarScorers = similarPercentagesBetweenGenders(marksList, studentsList)
     println("the same scorers of different genders are: ")
-    similarScorers.map(println _)
+    similarScorers.foreach(println _)
     //--------------------------------------------------
     println("The percentages of female group that are not in male are: ")
-    femalePercentageNotInMale(marksList, studentsList).map(println _)
+    femalePercentageNotInMale(marksList, studentsList).foreach(println _)
   }
 
   /**
@@ -52,7 +55,7 @@ object StudentMarks {
 
   def mapping(marksList: List[MarksCase], namelist: List[StudentCase]): Map[String, AnyRef] = {
     val scoreList = scoreCardGenerator(marksList).map(x => ScoreCard(x._1, x._2, x._3))
-    val tempList = for (x <- scoreList; y <- namelist if (x.studentId == y.id)) yield (y.name, x)
+    val tempList = for (x <- scoreList; y <- namelist if x.studentId == y.id) yield (y.name, x)
     val temp = tempList.groupBy(x => x._1)
     temp.map(x => (x._1, x._2.map(y => y._2)))
   }
@@ -60,7 +63,7 @@ object StudentMarks {
   def scoreCardGenerator(marksList: List[MarksCase]): List[(Long, Map[Long, Float], Float)] = {
     {
       val tempPair1 = marksList.groupBy(x => x.studentId) //Key value pair having studentId as key & list of list of MarksCase as value
-    val tempMap = tempPair1.map(x => (x._1, (x._2.map(y => (y.subjectId, y.marks))).toMap, x._2.map(y => y.marks).sum / 5))
+    val tempMap = tempPair1.map(x => (x._1, x._2.map(y => (y.subjectId, y.marks)).toMap, x._2.map(y => y.marks).sum / 5))
       tempMap.toList.sortBy(x=>x._1)
     }
   }
@@ -73,8 +76,8 @@ object StudentMarks {
 
   def searchByName(marksList: List[MarksCase], studentsList: List[StudentCase], name: String) {
     val map_ScoreCard = mapping(marksList, studentsList)
-    val result = for (x <- map_ScoreCard if (x._1.equalsIgnoreCase(name))) yield x._2
-    if (!result.isEmpty) result.map(println _)
+    val result = for (x <- map_ScoreCard if x._1.equalsIgnoreCase(name)) yield x._2
+    if (result.nonEmpty) result.foreach(println _)
     else println("Name not found")
   }
 
@@ -87,8 +90,8 @@ object StudentMarks {
 
   def getScoreCardByGender(marksList: List[MarksCase], studentsList: List[StudentCase]): (List[(String, ScoreCard)], List[(String, ScoreCard)]) = {
     val scoreList = scoreCardGenerator(marksList).map(x => ScoreCard(x._1, x._2, x._3))
-    val result1 = for (x <- scoreList; y <- studentsList if ((x.studentId == y.id) && y.gender == Gender.male)) yield (y.name, x) // combining the names and marks
-    val result2 = for (x <- scoreList; y <- studentsList if ((x.studentId == y.id) && y.gender == Gender.female)) yield (y.name, x) // combining the names and marks
+    val result1 = for (x <- scoreList; y <- studentsList if x.studentId == y.id && y.gender == Gender.male) yield (y.name, x) // combining the names and marks
+    val result2 = for (x <- scoreList; y <- studentsList if x.studentId == y.id && y.gender == Gender.female) yield (y.name, x) // combining the names and marks
 
     (result1, result2)
   }
@@ -112,7 +115,7 @@ object StudentMarks {
 
   def similarPercentagesBetweenGenders(marksList: List[MarksCase], studentsList: List[StudentCase]): List[((String, ScoreCard), (String, ScoreCard))] = {
     val scoreTuple = getScoreCardByGender(marksList, studentsList)
-    val result = for (x <- scoreTuple._1; y <- scoreTuple._2 if (x._2.percentage == y._2.percentage)) yield (x, y)
+    val result = for (x <- scoreTuple._1; y <- scoreTuple._2 if x._2.percentage == y._2.percentage) yield (x, y)
     result
   }
 
